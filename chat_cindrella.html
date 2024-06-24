@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cindrella's Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .chat-container {
+            width: 80%;
+            max-width: 600px;
+            height: 80%;
+            max-height: 700px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .profile-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        .message {
+            display: flex;
+            margin: 10px 0;
+        }
+
+        .message-left {
+            justify-content: flex-start;
+        }
+
+        .message-right {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #e0e0e0;
+        }
+
+        .message-right .message-content {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+        }
+
+        .chat-input button {
+            margin-left: 10px;
+            padding: 10px 20px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 20px;
+        }
+
+        .chat-input button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <img src="cutie.jpg" alt="Cutie" class="profile-pic">
+            <h2>Cutie</h2>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will be loaded here -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="message-input" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    <script>
+        const sender = 'Cindrella';  // Set the sender dynamically for Cindrella's chat
+
+        function loadMessages() {
+            const recipient = 'Cutie';
+            const url = `load_messages.php?sender=${sender}&recipient=${recipient}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(messages => {
+                    const chatMessages = document.getElementById('chat-messages');
+                    chatMessages.innerHTML = '';
+
+                    messages.forEach(message => {
+                        const messageElement = document.createElement('div');
+                        messageElement.className = `message ${message.sender === sender ? 'message-right' : 'message-left'}`;
+
+                        const messageContent = document.createElement('div');
+                        messageContent.className = 'message-content';
+                        messageContent.textContent = message.message;
+
+                        messageElement.appendChild(messageContent);
+                        chatMessages.appendChild(messageElement);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading messages:', error);
+                });
+        }
+
+        function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const messageText = messageInput.value.trim();
+            if (messageText === '') return;
+
+            const chatMessages = document.getElementById('chat-messages');
+
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message message-right';
+
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.textContent = messageText;
+
+            messageElement.appendChild(messageContent);
+            chatMessages.appendChild(messageElement);
+
+            messageInput.value = '';
+
+            // Send the message to the server using an AJAX request
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'send_message.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send(`sender=${sender}&recipient=Cutie&message=${messageText}`);
+        }
+
+        // Load initial messages when the page loads
+        window.onload = loadMessages;
+    </script>
+</body>
+</html>
