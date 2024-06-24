@@ -122,7 +122,7 @@
     function loadMessages() {
     const sender = 'Cutie';
     const recipient = 'Cindrella';
-    const url = `load_messages.php?sender=${sender}&recipient=${recipient}`;
+    const url = `http://convo.talk4fun.net/load_messages.php?sender=${sender}&recipient=${recipient}`;
 
     fetch(url)
         .then(response => response.json())
@@ -171,7 +171,7 @@ function sendMessage() {
 
     // Send the message to the server using an AJAX request
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'send_message.php', true);
+    xhr.open('POST', 'http://convo.talk4fun.net/send_message.php', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.send(`sender=Cutie&recipient=Cindrella&message=${messageText}`);
 }
